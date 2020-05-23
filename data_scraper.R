@@ -3,7 +3,10 @@ library(plyr)
 library(tidyverse)
 library(lubridate)
 
-scrape_lastfm <- function(username, scrape = "ALL") {
+# You can specify how many pages you want to go back to with page_limit
+# The default is to scrape everything
+
+scrape_lastfm <- function(username, page_limit = "ALL") {
   lastfm <- str_c("https://www.last.fm/user/",
                   username,
                   "/library?page=")
@@ -16,7 +19,7 @@ scrape_lastfm <- function(username, scrape = "ALL") {
     as.numeric() %>%
     max(na.rm = TRUE)
   
-  if (scrape != "ALL") {pages <- scrape}
+  if (page_limit != "ALL") {pages <- page_limit}
   
   lapply(1:pages, function(i) {
     
