@@ -1,8 +1,9 @@
 library(rvest)
+library(plyr)
 library(tidyverse)
 library(lubridate)
 
-scrape_lastfm <- function(username) {
+scrape_lastfm <- function(username, scrape = "ALL") {
   lastfm <- str_c("https://www.last.fm/user/",
                   username,
                   "/library?page=")
@@ -15,9 +16,11 @@ scrape_lastfm <- function(username) {
     as.numeric() %>%
     max(na.rm = TRUE)
   
+  if (scrape != "ALL") {pages <- scrape}
   
   lapply(1:pages, function(i) {
-    page <- read_html(str_c(lastfm, i))
+    
+    page <- read_html(str_c(lastfm, i)) 
     
     songs <- page %>%
       html_nodes(xpath = "//td[@class = 'chartlist-name']") %>%
