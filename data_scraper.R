@@ -1,3 +1,5 @@
+# Scraper for lastfm data given a username
+
 library(rvest)
 library(plyr)
 library(tidyverse)
@@ -22,7 +24,6 @@ scrape_lastfm <- function(username, page_limit = "ALL") {
   if (page_limit != "ALL") {pages <- page_limit}
   
   lapply(1:pages, function(i) {
-    
     page <- read_html(str_c(lastfm, i)) 
     
     songs <- page %>%
@@ -43,12 +44,9 @@ scrape_lastfm <- function(username, page_limit = "ALL") {
       html_nodes("span") %>%
       html_attr("title") %>%
       str_extract("\\d.*") %>%
-      str_extract(".*,") %>%
-      str_sub(end = -2)
-    
-    
-    tibble(Song = songs, Artist = artists, Date = dates) %>%
-      mutate(Date = dmy(Date))
+      dmy_hm()
+      
+    tibble(Song = songs, Artist = artists, Date = dates) 
   }) %>%
     reduce(rbind)
 } 
